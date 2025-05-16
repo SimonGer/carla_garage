@@ -642,6 +642,8 @@ class GlobalConfig:
     self.normalize_imagenet = True
     self.use_wp_gru = False  # Whether to use the WP output GRU.
 
+    self.plant_wps = True # Input TP to transformer encoder
+
     # Semantic Segmentation
     self.use_semantic = True  # Whether to use semantic segmentation as auxiliary loss
     self.num_semantic_classes = 7

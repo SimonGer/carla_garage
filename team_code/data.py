@@ -119,7 +119,7 @@ class CARLA_Data(Dataset):  # pylint: disable=locally-disabled, invalid-name
 
         # If we are using checkpoints to predict the path, we can use all of the frames, otherwise we need to subtract
         # pred_len so that we have enough waypoint labels
-        last_frame = num_seq - (self.config.seq_len - 1) - (0 if not self.config.use_wp_gru else self.config.pred_len)
+        last_frame = num_seq - (self.config.seq_len - 1) - (0 if not (self.config.use_wp_gru or self.config.plant_wps) else self.config.pred_len)
         for seq in range(config.skip_first, last_frame):
           if seq % config.train_sampling_rate != 0:
             continue
@@ -327,7 +327,7 @@ class CARLA_Data(Dataset):  # pylint: disable=locally-disabled, invalid-name
 
       loaded_measurements.append(measurements_i)
 
-    if self.config.use_wp_gru:
+    if self.config.use_wp_gru or self.config.plant_wps:
       end = self.config.pred_len + self.config.seq_len
       start = self.config.seq_len
     else:
@@ -662,7 +662,7 @@ class CARLA_Data(Dataset):  # pylint: disable=locally-disabled, invalid-name
       bounding_boxes_padded = None
       future_bounding_boxes_padded = None
 
-    if self.config.use_wp_gru:
+    if self.config.use_wp_gru or self.config.plant_wps:
       waypoints = self.get_waypoints(loaded_measurements[self.config.seq_len - 1:],
                                      y_augmentation=aug_translation,
                                      yaw_augmentation=aug_rotation)

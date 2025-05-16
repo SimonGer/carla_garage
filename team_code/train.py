@@ -440,12 +440,16 @@ def main():
   else:
     config.detailed_loss_weights['loss_forcast'] = 0.0
 
-  if not config.use_controller_input_prediction:
+  if config.plant_wps:
     config.detailed_loss_weights['loss_target_speed'] = 0.0
-    config.detailed_loss_weights['loss_checkpoint'] = 0.0
 
-  if not config.use_wp_gru:
-    config.detailed_loss_weights['loss_wp'] = 0.0
+  else:
+    if not config.use_controller_input_prediction:
+      config.detailed_loss_weights['loss_target_speed'] = 0.0
+      config.detailed_loss_weights['loss_checkpoint'] = 0.0
+
+    if not config.use_wp_gru:
+      config.detailed_loss_weights['loss_wp'] = 0.0
 
   if not config.use_semantic:
     config.detailed_loss_weights['loss_semantic'] = 0.0
@@ -594,6 +598,8 @@ def main():
   num_params = sum(np.prod(p.size()) for p in model_parameters)
   if rank == 0:
     print('Total trainable parameters: ', num_params)
+    for idx, (name, param) in enumerate(model.named_parameters()):
+      print(f"{idx}: {name} | requires_grad={param.requires_grad}")
 
   g_cuda = torch.Generator(device='cpu')
   g_cuda.manual_seed(torch.initial_seed())
@@ -774,7 +780,7 @@ class Engine(object):
       bb_pixel_weight = None
       bb_avg_factor = None
 
-    if self.config.use_wp_gru:
+    if self.config.use_wp_gru or self.config.plant_wps:
       ego_waypoint = data['ego_waypoints'].to(self.device, dtype=torch.float32)
     else:
       ego_waypoint = None

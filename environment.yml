@@ -1,4 +1,4 @@
-name: garage_2
+name: garage_2_fresh
 channels:
   - conda-forge
   - defaults
