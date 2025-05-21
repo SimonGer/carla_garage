@@ -467,6 +467,8 @@ class GlobalConfig:
     self.lidar_architecture = 'regnety_032'  # LiDAR architecture used in the backbone resnet34, regnety_032
     # Whether to classify target speeds and regress a path as output representation.
     self.use_controller_input_prediction = True
+    self.no_target_speed = True
+    self.linear_wps = True
     # Whether to use the direct control predictions for driving
     self.inference_direct_controller = True
     # Label smoothing applied to the cross entropy losses
@@ -640,7 +642,7 @@ class GlobalConfig:
 
     # Whether to normalize the camera image by the imagenet distribution
     self.normalize_imagenet = True
-    self.use_wp_gru = False  # Whether to use the WP output GRU.
+    self.use_wp_gru = True  # Whether to use the WP output GRU.
 
     # Semantic Segmentation
     self.use_semantic = True  # Whether to use semantic segmentation as auxiliary loss
@@ -856,3 +858,6 @@ class GlobalConfig:
     self.data_roots = []
     for td_path in self.root_dir:
       self.data_roots = self.data_roots + [os.path.join(td_path, name) for name in os.listdir(td_path)]
+
+    # print("CLIPPING DATA ROOTS")
+    # self.data_roots = self.data_roots[:1]

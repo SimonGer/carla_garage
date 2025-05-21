@@ -444,6 +444,9 @@ def main():
     config.detailed_loss_weights['loss_target_speed'] = 0.0
     config.detailed_loss_weights['loss_checkpoint'] = 0.0
 
+  if config.no_target_speed:
+    config.detailed_loss_weights['loss_target_speed'] = 0.0
+
   if not config.use_wp_gru:
     config.detailed_loss_weights['loss_wp'] = 0.0
 
@@ -981,7 +984,10 @@ class Engine(object):
 
     self.optimizer.zero_grad(set_to_none=True)
     torch.cuda.empty_cache()
-
+ 
+    print("loss_checkpoint", detailed_losses_epoch["loss_checkpoint"])
+    print("loss_wp", detailed_losses_epoch["loss_wp"])
+    print(self.detailed_loss_weights)
     self.log_losses(loss_epoch, detailed_losses_epoch, num_batches, '')
 
   @torch.inference_mode()
