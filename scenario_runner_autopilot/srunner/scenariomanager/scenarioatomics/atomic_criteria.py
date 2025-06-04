@@ -382,6 +382,7 @@ class CollisionTest(Criterion):
 
         # If the actor speed is 0, the collision isn't its fault
         if CarlaDataProvider.get_velocity(self.actor) < self.EPSILON:
+            print("SKIPPED COLLISION DUE TO EPSILON!!!", event.other_actor.type_id)
             return
 
         # The collision is valid, save the data
