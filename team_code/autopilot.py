@@ -1371,6 +1371,26 @@ class AutoPilot(autonomous_agent_local.AutonomousAgent):
           intersects_with_ego = self.check_obb_intersection(ego_bounding_box, bounding_boxes[i])
           ego_speed = self._vehicle.get_velocity().length()
 
+          # Check for emergency vehicle in vehicletakingpriority
+          if len(CarlaDataProvider.active_scenarios) > 0:
+            scenario_type, scenario_data = CarlaDataProvider.active_scenarios[0]
+            if scenario_type in ["OppositeVehicleTakingPriority", "OppositeVehicleRunningRedLight"]:
+              opposite_vehicle = scenario_data[0]
+              direction = scenario_data[2]
+              if vehicle_id == opposite_vehicle.id:
+                ego_vehicle_transform = self._vehicle.get_transform()
+                opposite_location = t_u.get_relative_transform(np.array(ego_vehicle_transform.get_matrix()), np.array(opposite_vehicle.get_transform().get_matrix()))
+                distance_to_actor = ego_vehicle_location.distance(opposite_vehicle.get_location())
+
+                if opposite_location[1] > 0:
+                  opposite_direction = "right"
+                else:
+                  opposite_direction = "left"
+
+                if distance_to_actor < 50 and direction == opposite_direction and opposite_vehicle.get_velocity().length() > 0:
+                  print("Braking for emergency")
+                  intersects_with_ego = True
+
           if intersects_with_ego:
             blocking_actor = self._world.get_actor(vehicle_id)
 

@@ -151,6 +151,7 @@ class OppositeVehicleJunction(BasicScenario):
         # Get the z component
         collision_wp = self._map.get_waypoint(self._collision_location)
         self._collision_location.z = collision_wp.transform.location.z
+        CarlaDataProvider.active_scenarios.append((type(self).__name__, [opposite_actor, None, self._direction, False, 1e9, 1e9, False])) # added
 
     def _create_behavior(self):
         raise NotImplementedError("Found missing behavior")
